@@ -1,0 +1,109 @@
+config ODETECT_DEBUG
+        bool "Enable debugging output"
+
+config ODETECT_NUM_ADC
+        int "Number of ADC channels to use"
+        default 6
+
+comment "List of used ADC; control your channels number manually"
+
+menu "Use range channel"
+        config ODETECT_R1
+                bool "R1"
+                select ODETECT_ADC0
+                select ODETECT_PCI5
+
+        config ODETECT_R2
+                bool "R2"
+                select ODETECT_ADC1
+                select ODETECT_PCI4
+
+        config ODETECT_R3
+                bool "R3"
+                select ODETECT_ADC4
+                select ODETECT_PCI0
+
+        config ODETECT_R4
+                bool "R4"
+                select ODETECT_ADC5
+                select ODETECT_PCI1
+
+        config ODETECT_R5
+                bool "R5"
+                select ODETECT_ADC6
+                select ODETECT_PCI2
+
+        config ODETECT_R6
+                bool "R6"
+                select ODETECT_ADC7
+                select ODETECT_PCI3
+
+endmenu
+
+menu "ADC channels"
+        config ODETECT_ADC0
+                bool "ADC0"
+
+        config ODETECT_ADC1
+                bool "ADC1"
+
+        config ODETECT_ADC4
+                bool "ADC4"
+
+        config ODETECT_ADC5
+                bool "ADC5"
+
+        config ODETECT_ADC6
+                bool "ADC6"
+
+        config ODETECT_ADC7
+                bool "ADC7"
+
+        config ODETECT_ADC8
+                bool "ADC8"
+
+        config ODETECT_ADC9
+                bool "ADC9"
+
+        config ODETECT_ADC10
+                bool "ADC10"
+
+        config ODETECT_ADC11
+                bool "ADC11"
+
+        config ODETECT_ADC12
+                bool "ADC12"
+
+        config ODETECT_ADC13
+                bool "ADC13"
+endmenu
+
+config ODETECT_NUM_SONAR
+        int "Number of Sonars"
+        default 6
+
+menu "Sonars channels"
+        config ODETECT_PCI0
+                bool "PCINT0"
+
+        config ODETECT_PCI1
+                bool "PCINT1"
+
+        config ODETECT_PCI2
+                bool "PCINT2"
+
+        config ODETECT_PCI3
+                bool "PCINT3"
+
+        config ODETECT_PCI4
+                bool "PCINT4"
+
+        config ODETECT_PCI5
+                bool "PCINT5"
+
+        config ODETECT_PCI6
+                bool "PCINT6"
+
+        config ODETECT_PCI7
+                bool "PCINT7"
+endmenu
