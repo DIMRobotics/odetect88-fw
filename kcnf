@@ -1,6 +1,10 @@
 config ODETECT_DEBUG
         bool "Enable debugging output"
 
+config ODETECT_NUM_SENSORS
+        int "Number of sensor pairs"
+        default 1
+
 config ODETECT_NUM_ADC
         int "Number of ADC channels to use"
         default 6

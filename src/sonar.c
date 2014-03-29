@@ -137,9 +137,9 @@ ISR(PCINT0_vect)
         for (uint8_t i=0; delta != 0; i++, delta >>= 1) {
                 if (delta & 1) {
                         if (port & (1<<i)) { /* start of pulse */
-                                measures[i] = TCNT3;
+                                measures[CONFIG_ODETECT_NUM_SONAR - i - 1] = TCNT3;
                         } else { /* end of pulse */
-                                measures[i] = TCNT3 - measures[i];
+                                measures[CONFIG_ODETECT_NUM_SONAR - i - 1] = TCNT3 - measures[CONFIG_ODETECT_NUM_SONAR - i - 1];
                                 PCMSK0 &= ~(1<<i); /* disable this interrupt */
                         }
                 }

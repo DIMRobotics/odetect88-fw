@@ -75,7 +75,7 @@ uint8_t *adc_get(void)
         return measures;
 }
 
-uint8_t adc_scale(uint8_t x)
+uint8_t adc_scale_hd(uint8_t x)
 {
 	if (x <= 20)
                 return 160; /* max distance */
@@ -87,6 +87,34 @@ uint8_t adc_scale(uint8_t x)
                 return 82 - (x >> 1);
         else
                 return 0; /* wtf ?? */
+}
+
+uint8_t adc_scale_ld(uint8_t x)
+{
+        if (x <= 15)
+               return 40; /* max distance */
+        else if (x <= 34)
+                return 52 - x;
+        else if (x <= 74)
+                return 27 - (x >> 2);
+        else if (x <= 170)
+                return 13 - (x >> 4);
+        else
+                return 0; /* wtf? */
+}
+
+uint8_t adc_scale_md(uint8_t x)
+{
+        if (x <= 20)
+                return 80;
+        else if (x <= 43)
+                return 118 - (x << 1);
+        else if (x <= 73)
+                return 54 - (x >> 1);
+        else if (x <= 162)
+                return 26 - (x >> 3);
+        else
+                return 0;
 }
 
 static inline void adc_select_mux()
