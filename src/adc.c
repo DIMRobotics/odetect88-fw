@@ -7,8 +7,8 @@
 
 #include <arch/antares.h>
 
-static uint8_t measures[CONFIG_ODETECT_NUM_ADC];
-static uint8_t muxes[CONFIG_ODETECT_NUM_ADC] = {
+static volatile uint8_t measures[CONFIG_ODETECT_NUM_ADC];
+static volatile uint8_t muxes[] = {
 #ifdef CONFIG_ODETECT_ADC0
         0x00, /* ADC0 */
 #endif
@@ -27,6 +27,7 @@ static uint8_t muxes[CONFIG_ODETECT_NUM_ADC] = {
 #ifdef CONFIG_ODETECT_ADC7
         0x07, /* ADC7 */
 #endif
+#if 0
 #ifdef CONFIG_ODETECT_ADC8
         0x20, /* ADC8 */
 #endif
@@ -45,12 +46,16 @@ static uint8_t muxes[CONFIG_ODETECT_NUM_ADC] = {
 #ifdef CONFIG_ODETECT_ADC13
         0x25, /* ADC13 */
 #endif
+#endif
 };
 
-static uint8_t cnt = 0;
+static volatile uint8_t cnt = 0;
+
+static void adc_select_mux(void);
 
 ANTARES_INIT_LOW(adc_init)
 {
+        DDRF = 0;
         ADMUX = (1<<ADLAR); /* ADC0 channel, AREF as reference */
         ADCSRA |= (1<<ADEN)|(1<<ADIE)|(1<<ADPS1);
         ADCSRB |= (1<<ADHSM); /* high-speed mode */
@@ -62,6 +67,7 @@ ANTARES_INIT_LOW(adc_init)
 void adc_start(void)
 {
         cnt = 0;
+        adc_select_mux();
         ADCSRA |= (1<<ADSC); /* start convertion */
 }
 
