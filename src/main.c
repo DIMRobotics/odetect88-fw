@@ -5,6 +5,7 @@
 
 #include <odetect/adc.h>
 #include <odetect/sonar.h>
+#include <odetect/uart.h>
 
 #include <util/delay.h>
 
@@ -23,7 +24,7 @@ ANTARES_INIT_LOW(buzzer)
 
 ANTARES_INIT_HIGH(odetect_full)
 {
-        printk("All systems are ready\n");
+        //printk("All systems are ready\n");
         GPIO_WRITE_HIGH(GPB7);
         _delay_ms(50);
         GPIO_WRITE_LOW(GPB7);
@@ -34,15 +35,19 @@ uint8_t range(uint8_t i, uint8_t ir, uint16_t sonar)
         if (i == 0)
                 ir = adc_scale_ld(ir);
         else if (i == 1)
-                ir = adc_scale_hd(ir);
+                ir = adc_scale_md(ir); /* front */
         else if (i == 2)
                 ir = adc_scale_md(ir);
         else if (i == 3)
                 ir = adc_scale_ld(ir);
+        else if (i == 4 || i == 5)
+                ir = adc_scale_hd(ir);
         else 
                 ir = 0;
 
         uint8_t sn = sonar_scale(sonar);
+        if (i == 4 || i == 5)
+                sn = ir;
 
         if (abs(ir - sn) <= 10) {
                 return (ir + sn) >> 1;
@@ -52,8 +57,8 @@ uint8_t range(uint8_t i, uint8_t ir, uint16_t sonar)
 }
 
 static uint8_t measures[CONFIG_ODETECT_NUM_SENSORS];
-static uint8_t limits[] = { 20, 40, 20, 20, 20, 20 };
-static uint8_t sonar_table[] = { 0, 1, 5, 4 };
+static volatile uint8_t limits[] = { 0, 0, 0, 0, 0, 0 };
+static uint8_t sonar_table[] = { 0, 1, 5, 4, 2, 3 };
 
 void led_on(uint8_t i)
 {
@@ -103,6 +108,12 @@ void led_off(uint8_t i)
         }
 }
 
+void odetect_set_limit(uint8_t i, uint8_t limit)
+{
+        if (limit != 255)
+                limits[i] = limit;
+}
+
 ANTARES_APP(odetect_process)
 {
         adc_start();
@@ -119,27 +130,31 @@ ANTARES_APP(odetect_process)
 
         uint8_t flag_on = 0;
 
+        uart_send('s');
+
         for (uint8_t i=0; i<CONFIG_ODETECT_NUM_SENSORS; i++) {
                 measures[i] = range(i, ameasures[i], smeasures[sonar_table[i]]);
 
-                if (measures[i] <= limits[i]) {
+                //printk("%d ", ameasures[i]);
+
+                if (limits[i] && measures[i] <= limits[i]) {
                         flag_on = 1;
                         led_on(i);
+                        uart_send('1'); 
                 } else {
                         led_off(i);
+                        uart_send('0');
                 }
         }
 
-        if (flag_on)
-                GPIO_WRITE_HIGH(GPB7);
-        else
-                GPIO_WRITE_LOW(GPB7);
-        
-        printk("Results: ");
-        //for (uint8_t i=0; i<CONFIG_ODETECT_NUM_SENSORS; i++) {
-                //printk("%03u ", measures[i]);
-                printk("%03u %03u; ", adc_scale_hd(ameasures[1]), sonar_scale(smeasures[sonar_table[1]]));
-        //}
+        //printk("\r");
 
-        printk("\r");
+        uart_send('f');
+
+        if (flag_on) {
+                GPIO_WRITE_HIGH(GPB7);
+                _delay_ms(100);
+                GPIO_WRITE_LOW(GPB7);
+                _delay_ms(700);
+        }
 }

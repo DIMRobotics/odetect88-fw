@@ -1,1 +1,1 @@
-objects-y+=main.o adc.o sonar.o
+objects-y+=main.o adc.o sonar.o uart.o

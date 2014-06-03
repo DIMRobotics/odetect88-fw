@@ -92,7 +92,7 @@ uint8_t adc_scale_hd(uint8_t x)
         else if (x <= 150)
                 return 82 - (x >> 1);
         else
-                return 0; /* wtf ?? */
+                return 10; /* wtf ?? */
 }
 
 uint8_t adc_scale_ld(uint8_t x)
@@ -106,7 +106,7 @@ uint8_t adc_scale_ld(uint8_t x)
         else if (x <= 170)
                 return 13 - (x >> 4);
         else
-                return 0; /* wtf? */
+                return 3; /* wtf? */
 }
 
 uint8_t adc_scale_md(uint8_t x)
@@ -120,7 +120,7 @@ uint8_t adc_scale_md(uint8_t x)
         else if (x <= 162)
                 return 26 - (x >> 3);
         else
-                return 0;
+                return 8;
 }
 
 static inline void adc_select_mux()
